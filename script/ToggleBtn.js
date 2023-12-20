@@ -1,8 +1,9 @@
 class ToggleBtn {
   constructor(x, y, w, h, roundness, texts) {
+    // ToggleBtn 객체의 속성 초기화
     this.width = w;
     this.height = h;
-    this.roundness = roundness;
+    this.roundness = 300;
     this.texts = texts;
     this.x = x;
     this.y = y;
@@ -13,14 +14,14 @@ class ToggleBtn {
     this.velocityY = random(5, 10);
     this.gravity = 0.8;
     this.airResistance = 0.04;
-    this.buttonColor = color(0, 255, 0); // Initial button color (green)
+    this.buttonColor = color(0, 255, 0); // 초기 버튼 색상 (녹색)
   }
 
   toggle() {
-    // Toggle the button state
+    // 버튼 상태를 토글
     this.isOn = !this.isOn;
 
-    // Change button color when toggled
+    // 토글될 때 버튼 색상 변경
     this.buttonColor = this.isOn ? color(255, 0, 0) : color(0, 255, 0);
   }
 
@@ -46,10 +47,10 @@ class ToggleBtn {
     // Canvas boundary control
     if (this.x < this.width) {
       this.x = this.width;
-      this.velocityX *= -1; // Reverse velocity to keep the object within the canvas
+      this.velocityX *= 0; // Reverse velocity to keep the object within the canvas
     } else if (this.x > width - this.width) {
       this.x = width - this.width;
-      this.velocityX *= -1; // Reverse velocity to keep the object within the canvas
+      this.velocityX *= 0; // Reverse velocity to keep the object within the canvas
     }
 
     if (this.y < this.height) {
@@ -68,30 +69,15 @@ class ToggleBtn {
 
         // Vertical collision handling
         if (
-          thisHitbox.right > otherHitbox.left &&
-          thisHitbox.left < otherHitbox.right &&
-          thisHitbox.bottom > otherHitbox.top &&
-          thisHitbox.top < otherHitbox.bottom
+          thisHitbox.right >= otherHitbox.left &&
+          thisHitbox.left <= otherHitbox.right &&
+          thisHitbox.bottom >= otherHitbox.top &&
+          thisHitbox.top <= otherHitbox.bottom
         ) {
           // Apply gravity only when touching the bottom of another object
           if (thisHitbox.bottom <= otherHitbox.bottom && this.velocityY > 0) {
             this.velocityY *= -0.2; // Adjust the bounce factor, reduce the bounce
             this.y = otherHitbox.top - this.height;
-          }
-        }
-
-        // Horizontal collision handling
-        if (
-          thisHitbox.bottom > otherHitbox.top &&
-          thisHitbox.top < otherHitbox.bottom &&
-          thisHitbox.right > otherHitbox.left &&
-          thisHitbox.left < otherHitbox.right
-        ) {
-          // Apply a weak force to push objects away
-          if (thisHitbox.right <= otherHitbox.right) {
-            this.velocityX += 0.1; // Adjust the force as needed, reduce the force
-          } else {
-            this.velocityX -= 0.1; // Adjust the force as needed, reduce the force
           }
         }
       }
@@ -100,7 +86,8 @@ class ToggleBtn {
 
   display() {
     fill(this.buttonColor);
-    ellipse(this.x, this.y, this.width * 2, this.height * 2);
+    rectMode(CENTER);
+    rect(this.x, this.y, this.width * 2, this.height * 2, this.roundness);
 
     textSize(20);
     textAlign(CENTER, CENTER);
@@ -112,27 +99,13 @@ class ToggleBtn {
       stroke(255);
       strokeWeight(0.5);
 
-      let xPosition = this.x;
+      let xPosition = this.x - this.width + 20 + i * 10;
       let yPosition = this.y;
 
-      // Calculate the total width of the text
-      let totalWidth = this.texts.reduce(
-        (sum, text) => sum + textWidth(text),
-        0
-      );
-
-      // Distribute the text evenly around the button
-      let startX = xPosition - totalWidth / 2;
       let letterSpacing = 10;
-      startX += i * letterSpacing;
+      xPosition += i * letterSpacing;
 
-      text(
-        this.texts[i],
-        startX,
-        yPosition,
-        textWidth(this.texts[i]),
-        this.height * 2 - 20
-      );
+      text(this.texts[i], xPosition, yPosition, 10, this.height * 2 - 20);
     }
   }
 
@@ -145,21 +118,4 @@ class ToggleBtn {
     this.x = constrain(this.x, this.width, width - this.width);
     this.y = constrain(this.y, this.height, height - this.height);
   }
-}
-
-let toggleButton;
-
-function setup() {
-  createCanvas(400, 200);
-  toggleButton = new ToggleBtn(100, 100, 50, 30, 10, ['Toggle']);
-}
-
-function draw() {
-  background(toggleButton.isOn ? color('salmon') : 0);
-  toggleButton.update([]);
-  toggleButton.display();
-}
-
-function mousePressed() {
-  toggleButton.toggle();
 }

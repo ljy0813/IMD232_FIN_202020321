@@ -21,10 +21,10 @@ class CustomObject {
       let otherHitbox = otherObj.getBoundingBox();
 
       if (
-        thisHitbox.right > otherHitbox.left &&
-        thisHitbox.left < otherHitbox.right &&
-        thisHitbox.bottom > otherHitbox.top &&
-        thisHitbox.top < otherHitbox.bottom
+        thisHitbox.right + 3 >= otherHitbox.left - 3 &&
+        thisHitbox.left - 3 <= otherHitbox.right + 3 &&
+        thisHitbox.bottom >= otherHitbox.top &&
+        thisHitbox.top <= otherHitbox.bottom
       ) {
         return true;
       }
